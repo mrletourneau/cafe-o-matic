@@ -9,3 +9,5 @@ phases:
     commands:
       - echo Build started on `date`
       - ./gradlew run
+      - echo Uploading output to s3...
+      - aws s3 cp /tmp/index.html s3://letoura-dev/index.html
