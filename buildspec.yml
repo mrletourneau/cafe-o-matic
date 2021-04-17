@@ -7,7 +7,9 @@ phases:
       - echo Nothing to do now
   build:
     commands:
+      - echo Downloading menu from ${s3_menu_bucket}/menu.txt
+      - aws s3 cp ${s3_menu_bucket}/menu.txt /tmp/menu.txt
       - echo Build started on `date`
       - ./gradlew run
       - echo Uploading output to s3...
-      - aws s3 cp /tmp/index.html s3://letoura-dev/index.html
+      - aws s3 cp /tmp/index.html s3://letoura-dev/${service_instance_name}/index.html

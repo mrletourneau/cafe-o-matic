@@ -3,14 +3,52 @@
  */
 package cafe.o.matic
 
+import mu.KotlinLogging
 import java.io.File
+import kotlin.system.exitProcess
+
+// Environment variable read to get the restaurant name
+const val RESTAURANT_NAME = "restaurant_name"
+val logger = KotlinLogging.logger() {}
 
 fun main(args: Array<String>) {
-    val name = if (args.isNotEmpty())
-        args.first()
-    else
-        "nobody"
+    val restaurantName = System.getenv(RESTAURANT_NAME)
+    val name = if (restaurantName.isNotEmpty())
+        restaurantName
+    else {
+        logger.warn("No restaurant name found")
+        "emptyName"
+    }
 
-    println("HELLO, $name")
-    File("/tmp/index.html").writeText("$name")
+    val menu: List<String>
+
+    try {
+        menu = File("/tmp/menu.txt").readLines()
+    } catch (e: Exception) {
+        logger.error("Error reading menu file", e)
+        exitProcess(1)
+    }
+
+    try {
+        File("/tmp/index.html").writeText(createRestaurantSite(name, menu))
+    } catch (e: Exception) {
+        logger.error("Error writing html", e)
+        exitProcess(1)
+    }
 }
+
+fun createRestaurantSite(restaurantName:String, menu: List<String>) =
+    """
+        <html>
+            <head>
+                <title>$restaurantName</title>
+            </head>
+            <body>
+                <h1>$restaurantName</h1>
+                <h3>Menu</h3>
+                <ul>
+                    ${menu.joinToString(separator = "") { "\n<li>${it}</li>" }}
+                </ul>
+            </body>
+        </html>
+    """.trimIndent()
