@@ -13,7 +13,7 @@ val logger = KotlinLogging.logger() {}
 
 fun main(args: Array<String>) {
     val restaurantName = System.getenv(RESTAURANT_NAME)
-    val name = if (restaurantName.isNotEmpty())
+    val name = if (restaurantName != null)
         restaurantName
     else {
         logger.warn("No restaurant name found")
